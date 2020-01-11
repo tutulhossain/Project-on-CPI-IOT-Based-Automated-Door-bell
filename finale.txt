@@ -1,0 +1,35 @@
+#include <ESP8266WiFi.h>
+#define BLYNK_PRINT Serial    // Comment this out to disable prints and save space
+#include <BlynkSimpleEsp8266.h>
+BlynkTimer timer;
+
+char auth[] = "dQQ8G0h4bzFzSfvPy7vSnDBoabCnrT0F";
+char ssid[] = "SUB.SIDD.TPD.05";
+char pass[] = "stamford";
+int flag =0;
+
+/* HC-SR501 Motion Detector */
+void notifyOnDoor()
+{
+  int isButtonPressed=digitalRead(D1);
+  if(isButtonPressed==1 && flag ==0)
+  {
+    Blynk.notify("Someone behind in the door");
+    flag=1;
+  }
+  else if(isButtonPressed==0)
+  {
+    flag=0;
+  }
+}
+void setup()
+{
+  Blynk.begin(auth,ssid,pass);
+  pinMode(D1,INPUT_PULLUP);
+  timer.setInterval(100L,notifyOnDoor);
+}
+void loop()
+{
+  Blynk.run();
+  timer.run();
+}
